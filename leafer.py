@@ -13,7 +13,7 @@ class Leaf:
     def __init__(self,path):
         if path in Leaf.leaf_pile: # don't reinitialize already existing object
            return None
-        # if we get here, we are initializing a new object
+        # if we get here, we are initializing a new Leaf object
         Leaf.leaf_pile[path] = self
         self._path           = path                      # relative path to current directory
         self._files          = OrderedDict() # attributes for each file in current directory
@@ -59,7 +59,7 @@ class Leaf:
             s  = stat(path+'/'+d)
             self.dire(d, leaf=Leaf(path + '/' + d), uname=s.st_uid, gname=s.st_gid)
 
-    def climb(self):
+    def descend(self):
         ''' climb() recursively does a top-down traverse of the tree of leaves below
         the starting point.
         climb() should be called from a generator or other contruct that will
@@ -67,32 +67,13 @@ class Leaf:
         '''
         yield self;
         for v in self._dirs.values():
-            yield from v['leaf'].climb()
+            yield from v['leaf'].descend()
+
+    def ascend(self):
+        for v in self._dirs.values():
+            yield from v['leaf'].ascend()
+        yield self;
 
 
-
-
-
-
-# print(l1,'\n',l2,'\n',l3)
-#     def __init__(self,location,dirs,files):
-#         self.location = location
-#         self.files    = files
-#         if dirs == None:
-#             self.dirs[dir] = k
-#         for dir in dirs:
-#             self.dirs[dir] = Leaf(dir,None,None)
-# class Deployment:
-#     # A deployment
-#     def __init__(self,sanction=None,local_base=None):
-#         self.sanction   = sanction
-#         self.local_base =local_base
-#         self.tree       = dict()
-#     def tree =
-# class Tree:
-#     pass
-#
-# class Leaf:
-#     pass
 
 
