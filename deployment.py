@@ -43,26 +43,24 @@ if __name__ == '__main__':
             os.link(leaf.path+'/'+f,leaf.path+'/.'+sanction+'/'+f)
 
     # build list of all files to tar
-    with open(args.archive_dir + '/list','w') as fd:
+
+    file_of_files = args.archive_dir + '/sanctioned.' + args.sanction +'.list'
+    tar_file      = args.archive_dir + '/sanctioned.' + args.sanction + '.tar'
+    with open(file_of_files,'w') as fd:
        for leaf in tree.descend():
            for f in leaf.files.keys():
                fd.write(leaf.path+'/.'+sanction+'/'+f+'\n')
 
     # create tar of listed files
 
-    output = check_output('/usr/bin/tar -T ' + args.archive_dir + '/list -cvf '
-         + args.archive_dir + '/sanctioned.' + args.sanction+'.tar 2>&1',
+    output = check_output(
+         '/usr/bin/tar -T ' + file_of_files + ' -cvf ' + tar_file + ' 2>&1',
          shell=True
     )
     print('output=',output.decode())
 
-    # os.system('/usr/bin/tar -T '
-    #            + args.archive_dir + '/list -cvf '
-    #            + args.archive_dir + '/sanctioned.' + args.sanction+'.tar'
-    # )
-
     # remove the tarred files from the .SANCTION directories
-    with open(args.archive_dir + '/list','r') as fd:
+    with open(file_of_files,'r') as fd:
         for file in fd.readlines():
             file = file[:-1]                 # removing line-end character (assuming UNIX)
             print( 'removing: "'+file+'"',file=stderr)
@@ -71,32 +69,4 @@ if __name__ == '__main__':
     # remove the now empty '.SANCTION' temporary directories
     for leaf in tree.ascend():
         os.rmdir(leaf.path+'/.'+args.sanction)
-
-
-
-
-
-
-
-# print(l1,'\n',l2,'\n',l3)
-#     def __init__(self,location,dirs,files):
-#         self.location = location
-#         self.files    = files
-#         if dirs == None:
-#             self.dirs[dir] = k
-#         for dir in dirs:
-#             self.dirs[dir] = Leaf(dir,None,None)
-# class Deployment:
-#     # A deployment
-#     def __init__(self,sanction=None,local_base=None):
-#         self.sanction   = sanction
-#         self.local_base =local_base
-#         self.tree       = dict()
-#     def tree =
-# class Tree:
-#     pass
-#
-# class Leaf:
-#     pass
-
 
