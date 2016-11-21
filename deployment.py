@@ -3,19 +3,19 @@ def parse_command_line(command_line):
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-s', '--sanction--',
+        '-s', '--sanction',
         dest    = 'sanction',
         default = 'CR_000000',
         help    = 'authorizing document (CR/DR/Novo/etc)'
     )
     parser.add_argument(
-        '-t', '--top-dir--',
+        '-t', '--top-dir',
         dest    = 'top_dir',
         default = 'deploy_test',
         help    = 'path at top of relative deployment tree'
     )
     parser.add_argument(
-        '-a', '--archive-dir--',
+        '-a', '--archive-dir',
         dest    = 'archive_dir',
         default = 'deploy_tars',
         help    = 'location of archive'
