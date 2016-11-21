@@ -6,20 +6,56 @@ def parse_command_line(command_line):
         '-s', '--sanction',
         dest    = 'sanction',
         default = 'CR_000000',
-        help    = 'authorizing document (CR/DR/Novo/etc)'
+        help    = 'authorizing document id (CR/DR/Novo/etc)'
     )
     parser.add_argument(
         '-t', '--top-dir',
         dest    = 'top_dir',
         default = 'deploy_test',
-        help    = 'path at top of relative deployment tree'
+        help    = 'path of top of tree to archive'
     )
     parser.add_argument(
-        '-a', '--archive-dir',
-        dest    = 'archive_dir',
+        '-f','--file',
+        dest    = 'archive_file',
+        default = 'sanction',
+        help    = 'archive file'
+    )
+    parser.add_argument(
+        '-b','--base_dir',
+        dest    = 'base_dir',
+        default = '.',
+        help    = 'base for relative paths'
+    )
+    parser.add_argument(
+        '-y','--deploy_dir',
+        dest    = 'deploy_dir',
+        default = 'deploy_tars',
+        help    = 'directory for archive and support files'
+    )
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        '-a', '--archive',
+        dest    = 'archive',
+        action  = 'store_true',
         default = 'deploy_tars',
         help    = 'location of archive'
     )
+    group.add_argument(
+        '-x', '--extract',
+        dest    = 'extract',
+        action  = 'store_true',
+        default = 'deploy_tars',
+        help    = 'location of archive'
+    )
+    group.add_argument(
+        '-r', '--revert',
+        dest    = 'revert',
+        action  = 'store_true',
+        default = 'deploy_tars',
+        help    = 'location of archive'
+    )
+
     return parser.parse_args(command_line)
 
 
@@ -28,13 +64,10 @@ if __name__ == '__main__':
     from   leafer     import Leaf
     from   subprocess import check_output
     from   sys        import argv,stderr
-    args = parse_command_line(argv[1:])
+    args = parse_command_line(argv[1:]) # skip argv[0] (program name)
 
     # populate tree with directory to be tarred up
-    tree = Leaf(args.top_dir)
-    for d,ds,fs in os.walk(args.top_dir):
-        leaf = Leaf(d)
-        leaf.leaf_update(d,files=fs,dirs=ds)
+    tree = Leaf.tree_of_folder(base=args.base_dir,top=args.top_dir)
 
     # create temporary links to be tarred
     sanction = args.sanction
@@ -46,8 +79,8 @@ if __name__ == '__main__':
             os.link(leaf.path+'/'+f,leaf.path+'/.'+sanction+'/'+f)
 
     # build list of all files to tar
-    file_of_files = args.archive_dir + '/sanctioned.' + args.sanction +'.list'
-    tar_file      = args.archive_dir + '/sanctioned.' + args.sanction + '.tar'
+    file_of_files = args.deploy_dir + '/' + args.archive_file +'.' + args.sanction +'.list'
+    tar_file      = args.deploy_dir + '/' + args.archive_file +'.' + args.sanction + '.tar'
     with open(file_of_files,'w') as fd:
        for leaf in tree.descend():
            for f in leaf.files.keys():

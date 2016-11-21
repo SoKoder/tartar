@@ -5,6 +5,17 @@ class Leaf:
     ''' Leaf(foo) acts as a factory, creating one and only one bar object (Leaf) for each foo (path)'''
     leaf_pile = dict();
 
+    @classmethod
+    def tree_of_folder(cls,base='.',top='.'):
+        # populate tree with directory to be tarred up
+        import os
+        os.chdir(base)
+        tree = Leaf(top)
+        for d, ds, fs in os.walk(top):
+            leaf = Leaf(d)
+            leaf.leaf_update(d, files=fs, dirs=ds)
+        return tree
+
     def __new__(cls,path):
         if path in Leaf.leaf_pile:          # create but one leaf for any one path
             return(Leaf.leaf_pile[path])    # return already in-service leaf
