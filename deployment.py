@@ -2,6 +2,29 @@
 def parse_command_line(command_line):
     import argparse
     parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument(
+        '-a', '--archive',
+        dest='archive',
+        action='store_true',
+        default=True,
+        help='archive files'
+    )
+    group.add_argument(
+        '-x', '--extract',
+        dest='extract',
+        action='store_true',
+        default=None,
+        help='extract files'
+    )
+    group.add_argument(
+        '-r', '--revert',
+        dest='revert',
+        action='store_true',
+        default=None,
+        help='revert files'
+    )
     parser.add_argument(
         '-s', '--sanction',
         dest    = 'sanction',
@@ -33,28 +56,7 @@ def parse_command_line(command_line):
         help    = 'directory for archive and support files'
     )
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        '-a', '--archive',
-        dest    = 'archive',
-        action  = 'store_true',
-        default = 'deploy_tars',
-        help    = 'location of archive'
-    )
-    group.add_argument(
-        '-x', '--extract',
-        dest    = 'extract',
-        action  = 'store_true',
-        default = 'deploy_tars',
-        help    = 'location of archive'
-    )
-    group.add_argument(
-        '-r', '--revert',
-        dest    = 'revert',
-        action  = 'store_true',
-        default = 'deploy_tars',
-        help    = 'location of archive'
-    )
+
 
     return parser.parse_args(command_line)
 
