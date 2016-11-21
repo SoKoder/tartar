@@ -5,20 +5,23 @@ from sys import argv,stderr
 def parse_command_line():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s','--sanction--',
-                        dest='sanction',
-                        default='CR_000000',
-                        help='authorizing document (CR/DR/Novo/etc)'
+    parser.add_argument(
+        '-s', '--sanction--',
+        dest    = 'sanction',
+        default = 'CR_000000',
+        help    = 'authorizing document (CR/DR/Novo/etc)'
     )
-    parser.add_argument('-t','--top-dir--',
-                        dest='top_dir',
-                        default='deploy_test',
-                        help='path at top of relative deployment tree'
+    parser.add_argument(
+        '-t', '--top-dir--',
+        dest    = 'top_dir',
+        default = 'deploy_test',
+        help    = 'path at top of relative deployment tree'
     )
-    parser.add_argument('-a','--archive-dir--',
-                        dest='archive_dir',
-                        default='deploy_tars',
-                        help='location of archive'
+    parser.add_argument(
+        '-a', '--archive-dir--',
+        dest    = 'archive_dir',
+        default = 'deploy_tars',
+        help    = 'location of archive'
     )
     return parser.parse_args(argv[1:])
 
@@ -43,7 +46,6 @@ if __name__ == '__main__':
             os.link(leaf.path+'/'+f,leaf.path+'/.'+sanction+'/'+f)
 
     # build list of all files to tar
-
     file_of_files = args.archive_dir + '/sanctioned.' + args.sanction +'.list'
     tar_file      = args.archive_dir + '/sanctioned.' + args.sanction + '.tar'
     with open(file_of_files,'w') as fd:
@@ -52,7 +54,6 @@ if __name__ == '__main__':
                fd.write(leaf.path+'/.'+sanction+'/'+f+'\n')
 
     # create tar of listed files
-
     output = check_output(
          '/usr/bin/tar -T ' + file_of_files + ' -cvf ' + tar_file + ' 2>&1',
          shell=True
