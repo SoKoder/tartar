@@ -1,8 +1,5 @@
-import os
-from leafer import Leaf
-from sys import argv,stderr
 
-def parse_command_line():
+def parse_command_line(command_line):
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -23,12 +20,15 @@ def parse_command_line():
         default = 'deploy_tars',
         help    = 'location of archive'
     )
-    return parser.parse_args(argv[1:])
+    return parser.parse_args(command_line)
 
 
 if __name__ == '__main__':
-    from subprocess import check_output
-    args = parse_command_line()
+    import os
+    from   leafer     import Leaf
+    from   subprocess import check_output
+    from   sys        import argv,stderr
+    args = parse_command_line(argv[1:])
 
     # populate tree with directory to be tarred up
     tree = Leaf(args.top_dir)
@@ -54,20 +54,24 @@ if __name__ == '__main__':
                fd.write(leaf.path+'/.'+sanction+'/'+f+'\n')
 
     # create tar of listed files
-    output = check_output(
+    tar_output = check_output(
          '/usr/bin/tar -T ' + file_of_files + ' -cvf ' + tar_file + ' 2>&1',
          shell=True
     )
-    print('output=',output.decode())
+    print('results of tar:',file=stderr)
+    print(tar_output.decode(),file=stderr)
 
     # remove the tarred files from the .SANCTION directories
+    print('temp files removed:',file=stderr)
     with open(file_of_files,'r') as fd:
         for file in fd.readlines():
             file = file[:-1]                 # removing line-end character (assuming UNIX)
-            print( 'removing: "'+file+'"',file=stderr)
+            print( '- ' + file,file=stderr)
             os.remove(file)
 
     # remove the now empty '.SANCTION' temporary directories
+    # using 'ascend()' would be necessary were they nested,
+    # but since they are not, I used ascend() just for fun
     for leaf in tree.ascend():
         os.rmdir(leaf.path+'/.'+args.sanction)
 
