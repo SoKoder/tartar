@@ -89,13 +89,13 @@ def parse_command_line(command_line):
         default=None,
         help='file(s) with permissions and ownerships of files to deploy'
     )
-    # parser.add_argument(
-    #     '-o', '--pando-files',
-    #     dest='pando_files',
-    #     nargs='*',
-    #     default=None,
-    #     help='file(s) with permissions and ownerships of files to deploy'
-    # )
+    parser.add_argument(
+        '-xf', '--excluded-files',
+        dest='excluded_file',
+        nargs='*',
+        default=None,
+        help='file(s) with lists of files to exclude from processing'
+    )
 
     return parser.parse_args(command_line)
 
