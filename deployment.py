@@ -99,25 +99,16 @@ def parse_command_line(command_line):
 
     return parser.parse_args(command_line)
 
-
-if __name__ == '__main__':
+def create_predeployment_archive(tree,args):
     import os
-    from   leafer     import Leaf
-    from   subprocess import check_output
-    from   sys        import argv,stderr
-    args = parse_command_line(argv[1:]) # skip argv[0] (program name)
-
-    # populate tree with directory to be tarred up
-    tree = Leaf.tree_of_folder(base=args.base_dir,top=args.top_dir)
-
     # create temporary links to be tarred
     sanction = args.sanction
     for leaf in tree.descend():
         # create a temporary .SANCTION directory under each leaf
-        os.mkdir(leaf.path+'/.'+sanction)
+        os.mkdir(leaf.path + '/.' + sanction)
         # link all files from each directory into its .SANCTION
         for f in leaf.files.keys():
-            os.link(leaf.path+'/'+f,leaf.path+'/.'+sanction+'/'+f)
+            os.link(leaf.path + '/' + f, leaf.path + '/.' + sanction + '/' + f)
 
     # build list of all files to tar
     file_of_files = args.deploy_dir + '/' + args.archive_file +'.' + args.sanction +'.list'
@@ -148,4 +139,19 @@ if __name__ == '__main__':
     # but since they are not, I used ascend() just for fun
     for leaf in tree.ascend():
         os.rmdir(leaf.path+'/.'+args.sanction)
+
+    return
+
+if __name__ == '__main__':
+    # import os
+    from   leafer     import Leaf
+    from   subprocess import check_output
+    from   sys        import argv,stderr
+
+    args      = parse_command_line(argv[1:]) # skip argv[0] (program name)
+    # populate tree with directory to be tarred up
+    tree      = Leaf.tree_of_folder(base=args.base_dir,top=args.top_dir)
+
+    create_predeployment_archive(tree,args)
+
 
