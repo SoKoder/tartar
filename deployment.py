@@ -5,18 +5,32 @@ def parse_command_line(command_line):
     group = parser.add_mutually_exclusive_group()
 
     group.add_argument(
-        '-a', '--archive',
-        dest='archive',
+        '-a', '--aquire',
+        dest='aquire',
         action='store_true',
         default=True,
-        help='archive files'
+        help='aquire files'
     )
     group.add_argument(
-        '-x', '--extract',
-        dest='extract',
+        '-p', '--predeploy',
+        dest='predeploy',
         action='store_true',
         default=None,
-        help='extract files'
+        help='predeploy files'
+    )
+    group.add_argument(
+        '-j', '--adjust',
+        dest='adjust',
+        action='store_true',
+        default=None,
+        help='adjust ownership and perms of files'
+    )
+    group.add_argument(
+        '-d', '--deploy',
+        dest='deploy',
+        action='store_true',
+        default=None,
+        help='deploy files'
     )
     group.add_argument(
         '-r', '--revert',
@@ -32,7 +46,7 @@ def parse_command_line(command_line):
         help    = 'authorizing document id (CR/DR/Novo/etc)'
     )
     parser.add_argument(
-        '-t', '--top-dir',
+        '-td', '--top-dir',
         dest    = 'top_dir',
         default = 'deploy_test',
         help    = 'path of top of tree to archive'
@@ -44,19 +58,44 @@ def parse_command_line(command_line):
         help    = 'archive file'
     )
     parser.add_argument(
-        '-b','--base_dir',
+        '-bd','--base_dir',
         dest    = 'base_dir',
         default = '.',
         help    = 'base for relative paths'
     )
     parser.add_argument(
-        '-y','--deploy_dir',
+        '-dd','--deploy_dir',
         dest    = 'deploy_dir',
         default = 'deploy_tars',
         help    = 'directory for archive and support files'
     )
-
-
+    parser.add_argument(
+        '-u','--userid',
+        dest    = 'userid',
+        default = None,
+        help    = 'Userid to sudo to when archiving/adjusting/deploying'
+    )
+    parser.add_argument(
+        '-m','--machines',
+        dest    ='host',
+        nargs   = '*',
+        default = None,
+        help    = 'machine(s) to archive from, adjust on or (pre)deploy to'
+    )
+    parser.add_argument(
+        '-pf', '--pando-files',
+        dest='pando_file',
+        nargs='*',
+        default=None,
+        help='file(s) with permissions and ownerships of files to deploy'
+    )
+    # parser.add_argument(
+    #     '-o', '--pando-files',
+    #     dest='pando_files',
+    #     nargs='*',
+    #     default=None,
+    #     help='file(s) with permissions and ownerships of files to deploy'
+    # )
 
     return parser.parse_args(command_line)
 
