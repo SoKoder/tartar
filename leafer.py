@@ -10,22 +10,25 @@ class Leaf:
         # populate tree with directory to be tarred up
         import os
         os.chdir(base)
-        tree = Leaf(top)
+        abs_base = os.path.abspath('.')
+        tree = Leaf(abs_base,top)
         for d, ds, fs in os.walk(top):
-            leaf = Leaf(d)
-            leaf.leaf_update(d, files=fs, dirs=ds)
+            leaf = Leaf(abs_base,d)
+            leaf.leaf_update(abs_base, d, files=fs, dirs=ds)
         return tree
 
-    def __new__(cls,path):
-        if path in Leaf.leaf_pile:          # create but one leaf for any one path
-            return(Leaf.leaf_pile[path])    # return already in-service leaf
+    def __new__(cls,base,path):
+        if base in Leaf.leaf_pile and path in Leaf.leaf_pile[base]:          # create but one leaf for any one path
+            return(Leaf.leaf_pile[base][path])    # return already in-service leaf
         return super(Leaf,cls).__new__(cls) # create new leaf
 
-    def __init__(self,path):
-        if path in Leaf.leaf_pile: # don't reinitialize already existing object
+    def __init__(self,base,path):
+        if base in Leaf.leaf_pile and path in Leaf.leaf_pile[base]: # don't reinitialize already existing object
            return None
         # if we get here, we are initializing a new Leaf object
-        Leaf.leaf_pile[path] = self
+        Leaf.leaf_pile[base]       = {}
+        Leaf.leaf_pile[base][path] = self
+        # Leaf.leaf_pile[path] = self
         self._path           = path                      # relative path to current directory
         self._files          = OrderedDict() # attributes for each file in current directory
         self._dirs           = OrderedDict() # link to subdir leafs and attributes for each subdir
@@ -62,13 +65,13 @@ class Leaf:
         if kwargs:
             self._dirs[name].update(kwargs)
 
-    def leaf_update(self,path,files=None,dirs=None):
+    def leaf_update(self,base,path,files=None,dirs=None):
         for f in files:
             s  = stat(path+'/'+f)
             self.file(f,gname=s.st_gid,uname=s.st_uid,size=s.st_size)
         for d in dirs:
             s  = stat(path+'/'+d)
-            self.dire(d, leaf=Leaf(path + '/' + d), uname=s.st_uid, gname=s.st_gid)
+            self.dire(d, leaf=Leaf(base,path + '/' + d), uname=s.st_uid, gname=s.st_gid)
 
     def descend(self):
         ''' climb() recursively does a top-down traverse of the tree of leaves below
