@@ -5,61 +5,74 @@ def parse_command_line(command_line):
     group = parser.add_mutually_exclusive_group()
 
     group.add_argument(
-        '-a', '--aquire',         dest    = 'aquire',        default = None,         action='store_true',
+        '-a', '--aquire',          dest = 'aquire',        default = True, action='store_true',
         help    = 'aquire files'
     )
     group.add_argument(
-        '-p', '--predeploy',      dest    = 'predeploy',     default = None,         action='store_true',
+        '-p', '--predeploy',       dest = 'predeploy',     default = None, action='store_true',
         help    = 'predeploy files'
     )
     group.add_argument(
-        '-j', '--adjust',         dest    = 'adjust',        default = None,         action='store_true',
+        '-j', '--adjust',          dest = 'adjust',        default = None, action='store_true',
         help    = 'adjust ownership and perms of files'
     )
     group.add_argument(
-        '-d', '--deploy',         dest    = 'deploy',        default = None,         action='store_true',
+        '-d', '--deploy',          dest = 'deploy',        default = None, action='store_true',
         help    = 'deploy files'
     )
     group.add_argument (
-        '-r', '--revert',         dest    = 'revert',        default = None,         action='store_true',
+        '-r', '--revert',          dest = 'revert',        default = None, action='store_true',
         help    = 'revert files'
     )
     parser.add_argument(
-        '-s', '--sanction',       dest    = 'sanction',      default = 'CR_000000',
+        '-s', '--sanction',        dest = 'sanction',      default = 'unsanctioned', 
         help    = 'authorizing document id (CR/DR/Novo/etc)'
     )
     parser.add_argument(
-        '-f','--file',             dest    = 'archive_file', default = 'sanction',
-        help    = 'archive file'
-    )
-    parser.add_argument(
-        '-bd','--base_dir',        dest    = 'base_dir',     default = '.',
-        help    = 'base for relative paths where to cd to for tar operation'
-    )
-    parser.add_argument(
-        '-td', '--top-dir',        dest    = 'top_dir',      default = 'deploy_test',
-        help    = 'path of top of tree to archive relative to BASE_DIR'
-    )
-    parser.add_argument(
-        '-ad','--archive_dir',      dest    = 'archive_dir',   default = 'archive_dir',
+        '-ad','--archive_dir',     dest = 'archive_dir',   default = 'default',
         help    = 'directory for archive and support files'
     )
     parser.add_argument(
-        '-u','--userid',           dest    = 'userid',       default = None,
-        help    = 'Userid to sudo to when aquiring/adjusting/deploying/reverting'
+        '-bd','--base_dir',        dest = 'base_dir',      default = '.',
+        help    = 'base for relative paths where to cd to for tar operation'
     )
     parser.add_argument(
-        '-m','--machines',         dest    ='host',          default = None, nargs='*',
+        '-td','--top-dir',         dest = 'top_dir',       default = '.',
+        help    = 'path of top of tree to archive relative to BASE_DIR'
+    )
+    parser.add_argument(
+        '-af','--file',            dest = 'archive_file',  default = 'default',
+        help    = 'archive file'
+    )
+    parser.add_argument(
+        '-if' ,'--include-file',    dest = 'include_file',  default = None, nargs='*',
+        help    = 'files(s) to include in processing'
+    )
+    parser.add_argument(
+        '-xf', '--exclude-file',    dest = 'exclude_file',  default = None, nargs='*', 
+        help    = 'file(s) to exclude from processing'
+    )
+    parser.add_argument(
+        '-il','--includes-lists',  dest = 'includes_file', default = None, nargs='*',
+        help    = 'file(s) with list of files to include in archive'
+    )
+    parser.add_argument(
+        '-xl','--excludes-lists',  dest = 'excludes_file', default = None, nargs='*', 
+        help    = 'file(s) with lists of files to exclude from processing'
+    )
+    parser.add_argument(
+        '-m' ,'--machines',        dest = 'host',          default = None, nargs='*',
         help    = 'machine(s) to aquire from, adjust on, (pre)deploy to or revert'
     )
     parser.add_argument(
-        '-pf', '--pando-files',    dest='pando_file',        default = None, nargs='*',
-        help='file(s) with permissions and ownerships of files to deploy'
+        '-u', '--userid',          dest = 'userid',        default = None,
+        help    = 'Userid to sudo to when aquiring/adjusting/deploying/reverting'
     )
     parser.add_argument(
-        '-xf', '--excludes-files', dest='excludes_file',     default = None, nargs='*', 
-        help='file(s) with lists of files to exclude from processing'
+        '-pl','--pandos-lists',    dest = 'pandos_file',   default = None, nargs='*',
+        help    = 'file(s) with permissions and ownerships of files to deploy'
     )
+
 
     return parser.parse_args(command_line)
 
