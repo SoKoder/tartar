@@ -72,14 +72,35 @@ def parse_command_line(command_line):
         '-pl','--pandos-lists',    dest = 'pandos_file',   default = None, nargs='*',
         help    = 'file(s) with permissions and ownerships of files to deploy'
     )
-
-
-    return parser.parse_args(command_line)
+    parsed = {
+        'aquire' :        None,
+        'predeploy' :     None,
+        'adjust' :        None,
+        'deploy' :        None,
+        'revert' :        None,
+        'sanction' :      None,
+        'archive_dir' :   None,
+        'base_dir' :      None,
+        'top_dir' :       None,
+        'archive_file' :  None,
+        'include_file' :  None,
+        'exclude_file' :  None,
+        'includes_file' : None,
+        'excludes_file' : None,
+        'host' :          None,
+        'userid' :        None,
+        'pandos_file' :   None,
+    }
+    args = parser.parse_args(command_line)
+    for a in parsed.keys():
+        parsed[a]=args.__dict__[a]
+    print(parsed)
+    return parsed
 
 def create_predeployment_archive(tree,args):
     import os
     # create temporary links to be tarred
-    sanction = args.sanction
+    sanction = parsed['sanction']
     for leaf in tree.descend():
         # create a temporary .SANCTION directory under each leaf
         os.mkdir(leaf.path + '/.' + sanction)
@@ -88,8 +109,8 @@ def create_predeployment_archive(tree,args):
             os.link(leaf.path + '/' + f, leaf.path + '/.' + sanction + '/' + f)
 
     # build list of all files to tar
-    file_of_files = args.archive_dir + '/' + args.archive_file +'.' + args.sanction +'.list'
-    tar_file      = args.archive_dir + '/' + args.archive_file +'.' + args.sanction + '.tar'
+    file_of_files = parsed['archive_dir'] + '/' + parsed['archive_file'] +'.' + parsed['sanction'] +'.list'
+    tar_file      = parsed['archive_dir'] + '/' + parsed['archive_file'] +'.' + parsed['sanction'] + '.tar'
     with open(file_of_files,'w') as fd:
        for leaf in tree.descend():
            for f in leaf.files.keys():
@@ -115,7 +136,7 @@ def create_predeployment_archive(tree,args):
     # using 'ascend()' would be necessary were they nested,
     # but since they are not, I used ascend() just for fun
     for leaf in tree.ascend():
-        os.rmdir(leaf.path+'/.'+args.sanction)
+        os.rmdir(leaf.path+'/.'+parsed['sanction'])
 
     return
 
@@ -125,10 +146,10 @@ if __name__ == '__main__':
     from   subprocess import check_output
     from   sys        import argv,stderr
 
-    args      = parse_command_line(argv[1:]) # skip argv[0] (program name)
+    parsed    =  parse_command_line(argv[1:]) # skip argv[0] (program name)
     # populate tree with directory to be tarred up
-    tree      = Leaf.tree_of_folder(base=args.base_dir,top=args.top_dir)
+    tree      = Leaf.tree_of_folder(base=parsed['base_dir'],top=parsed['top_dir'])
 
-    create_predeployment_archive(tree,args)
+    create_predeployment_archive(tree,parsed)
 
 
