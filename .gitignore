@@ -5,3 +5,4 @@ deploy_tars/
 deploy_test/
 deployment_tar/
 employee.py
+.unsanctioned/

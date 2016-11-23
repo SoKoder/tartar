@@ -72,29 +72,11 @@ def parse_command_line(command_line):
         '-pl','--pandos-lists',    dest = 'pandos_file',   default = None, nargs='*',
         help    = 'file(s) with permissions and ownerships of files to deploy'
     )
-    parsed = {
-        'aquire' :        None,
-        'predeploy' :     None,
-        'adjust' :        None,
-        'deploy' :        None,
-        'revert' :        None,
-        'sanction' :      None,
-        'archive_dir' :   None,
-        'base_dir' :      None,
-        'top_dir' :       None,
-        'archive_file' :  None,
-        'include_file' :  None,
-        'exclude_file' :  None,
-        'includes_file' : None,
-        'excludes_file' : None,
-        'host' :          None,
-        'userid' :        None,
-        'pandos_file' :   None,
-    }
-    args = parser.parse_args(command_line)
-    for a in parsed.keys():
-        parsed[a]=args.__dict__[a]
-    print(parsed)
+
+    args    = parser.parse_args(command_line)
+    parsed  = {}
+    for a in args.__dict__.keys():
+        parsed[a] = args.__dict__[a]
     return parsed
 
 def create_predeployment_archive(tree,args):
