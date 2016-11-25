@@ -1,6 +1,8 @@
 
 def parse_command_line(command_line):
     import argparse
+    from os import path
+
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
 
@@ -29,11 +31,11 @@ def parse_command_line(command_line):
         help    = 'authorizing document id (CR/DR/Novo/etc)'
     )
     parser.add_argument(
-        '-ad','--archive_dir',     dest = 'archive_dir',   default = 'default',
+        '-ad','--archive-dir',     dest = 'archive_dir',   default = 'default',
         help    = 'directory for archive and support files'
     )
     parser.add_argument(
-        '-bd','--base_dir',        dest = 'base_dir',      default = '.',
+        '-bd','--base-dir',        dest = 'base_dir',      default = '.',
         help    = 'base for relative paths where to cd to for tar operation'
     )
     parser.add_argument(
@@ -41,7 +43,7 @@ def parse_command_line(command_line):
         help    = 'path of top of tree to archive relative to BASE_DIR'
     )
     parser.add_argument(
-        '-af','--file',            dest = 'archive_file',  default = 'default',
+        '-af','--archive-file',    dest = 'archive_file',  default = 'default',
         help    = 'archive file'
     )
     parser.add_argument(
@@ -53,7 +55,7 @@ def parse_command_line(command_line):
         help    = 'file(s) to exclude from processing'
     )
     parser.add_argument(
-        '-il','--includes-lists',  dest = 'includes_file', default = None, nargs='*',
+            '-il','--includes-lists',  dest = 'includes_file', default = None, nargs='*',
         help    = 'file(s) with list of files to include in archive'
     )
     parser.add_argument(
@@ -74,9 +76,24 @@ def parse_command_line(command_line):
     )
 
     args    = parser.parse_args(command_line)
+
     parsed  = {}
     for a in args.__dict__.keys():
         parsed[a] = args.__dict__[a]
+        if a=='archive_dir':
+            pass
+        elif a=='acquire':
+            pass
+        elif a=='predeploy':
+            pass
+        elif a=='adjust':
+            pass
+        elif a=='deploy':
+            pass
+        elif a=='revert':
+            pass
+
+    path.isdir()
     return parsed
 
 def create_predeployment_archive(tree,args):
